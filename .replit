@@ -9,13 +9,11 @@ packages = ["glibcLocales"]
 
 [deployment]
 run = ["sh", "-c", "gunicorn --bind 0.0.0.0:8080 --workers 1 --timeout 120 main:app"]
+deploymentTarget = "cloudrun"
 
 [[ports]]
 localPort = 8080
 externalPort = 80
-
-[deployment]
-deploymentTarget = "cloudrun"
 
 [agent]
 expertMode = true
