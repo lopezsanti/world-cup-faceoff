@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Cup Face-Off</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <header class="hero">
+    <h1 class="hero-title">World Cup Face-Off ⚽</h1>
+    <p class="hero-subtitle">AI-Powered Match Prediction</p>
+  </header>
+
+  <main>
+
+    <!-- Team selection -->
+    <section id="team-selection" class="team-selection" aria-label="Team selection">
+      <div class="selector-group">
+        <label for="team-a-select">Team A</label>
+        <select id="team-a-select" name="team-a">
+          <option value="" selected disabled>Select a team...</option>
+        </select>
+      </div>
+
+      <div class="vs-divider" aria-hidden="true">VS</div>
+
+      <div class="selector-group">
+        <label for="team-b-select">Team B</label>
+        <select id="team-b-select" name="team-b">
+          <option value="" selected disabled>Select a team...</option>
+        </select>
+      </div>
+
+      <button id="predict-btn" class="predict-btn" type="button" disabled>PREDICT</button>
+    </section>
+
+    <!-- Thinking / loading animation -->
+    <section id="thinking-section" class="thinking-section hidden" aria-live="polite" aria-label="Generating prediction">
+      <svg id="thinking-ball" class="thinking-ball" viewBox="0 0 100 100" width="100" height="100" aria-hidden="true">
+        <circle cx="50" cy="50" r="46" fill="#ffffff" stroke="#1a1a1a" stroke-width="3"></circle>
+        <polygon points="50,20 62,29 57,44 43,44 38,29" fill="#1a1a1a"></polygon>
+        <polygon points="50,80 38,71 43,56 57,56 62,71" fill="#1a1a1a"></polygon>
+        <polygon points="18,40 30,33 38,44 32,58 18,58" fill="#1a1a1a"></polygon>
+        <polygon points="82,40 70,33 62,44 68,58 82,58" fill="#1a1a1a"></polygon>
+      </svg>
+
+      <p id="thinking-message" class="thinking-message">Fetching historical match data...</p>
+
+      <div class="progress-bar-track">
+        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section id="results-section" class="results-section hidden" aria-label="Prediction results">
+
+      <div class="matchup-header">
+        <div class="matchup-team">
+          <span id="result-team-a-flag" class="matchup-flag" aria-hidden="true"></span>
+          <span id="result-team-a-name" class="matchup-name"></span>
+        </div>
+        <span class="matchup-vs">VS</span>
+        <div class="matchup-team">
+          <span id="result-team-b-flag" class="matchup-flag" aria-hidden="true"></span>
+          <span id="result-team-b-name" class="matchup-name"></span>
+        </div>
+      </div>
+
+      <div class="probability-bars">
+        <div class="prob-row">
+          <div class="prob-label">
+            <span id="prob-team-a-label">Team A Win</span>
+            <span id="prob-team-a-value" class="prob-value">0%</span>
+          </div>
+          <div class="prob-bar-track">
+            <div id="prob-bar-a" class="prob-bar-fill prob-bar-a"></div>
+          </div>
+        </div>
+
+        <div class="prob-row">
+          <div class="prob-label">
+            <span>Draw</span>
+            <span id="prob-draw-value" class="prob-value">0%</span>
+          </div>
+          <div class="prob-bar-track">
+            <div id="prob-bar-draw" class="prob-bar-fill prob-bar-draw"></div>
+          </div>
+        </div>
+
+        <div class="prob-row">
+          <div class="prob-label">
+            <span id="prob-team-b-label">Team B Win</span>
+            <span id="prob-team-b-value" class="prob-value">0%</span>
+          </div>
+          <div class="prob-bar-track">
+            <div id="prob-bar-b" class="prob-bar-fill prob-bar-b"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="winner-announcement">
+        <h2 id="predicted-winner-text" class="predicted-winner-text"></h2>
+        <span id="confidence-badge" class="confidence-badge"></span>
+      </div>
+
+      <div class="stats-grid">
+
+        <div class="stat-card elo-card">
+          <h3>ELO Rating</h3>
+          <div class="stat-row">
+            <span id="team-a-elo-name" class="stat-team-name"></span>
+            <span id="team-a-elo-value" class="stat-team-value"></span>
+          </div>
+          <div class="stat-row">
+            <span id="team-b-elo-name" class="stat-team-name"></span>
+            <span id="team-b-elo-value" class="stat-team-value"></span>
+          </div>
+        </div>
+
+        <div class="stat-card form-card">
+          <h3>Recent Form (last 10)</h3>
+          <div id="team-a-form" class="form-block"></div>
+          <div id="team-b-form" class="form-block"></div>
+        </div>
+
+        <div class="stat-card h2h-card">
+          <h3>Head-to-Head</h3>
+          <p id="h2h-summary" class="h2h-summary"></p>
+          <div id="h2h-dots" class="h2h-dots" aria-label="Last 5 head-to-head results"></div>
+        </div>
+
+      </div>
+
+      <div class="key-factors-card">
+        <h3>Key Factors</h3>
+        <ul id="key-factors-list" class="key-factors-list"></ul>
+      </div>
+
+      <div class="players-section">
+        <div id="team-a-players-card" class="players-card"></div>
+        <div id="team-b-players-card" class="players-card"></div>
+      </div>
+
+      <button id="predict-again-btn" class="predict-again-btn" type="button">Predict Another Match</button>
+
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <p>World Cup Face-Off &mdash; AI-powered predictions for entertainment purposes only.</p>
+  </footer>
+
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+results_cache.csv
+goalscorers_cache.csv
+shootouts_cache.csv
+model_cache.pkl
