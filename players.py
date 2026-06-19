@@ -365,6 +365,17 @@ SQUAD_DATA = {
             {"name": "Zizo", "position": "Forward", "club": "Zamalek SC", "caps": 30},
         ],
     },
+    "Uzbekistan": {
+        "flag_emoji": "🇺🇿",
+        "confederation": "AFC",
+        "star_players": [
+            {"name": "Eldor Shomurodov", "position": "Forward", "club": "Cagliari", "caps": 75},
+            {"name": "Abbosbek Fayzullaev", "position": "Midfielder", "club": "CSKA Moscow", "caps": 40},
+            {"name": "Jasurbek Yakhshiboev", "position": "Forward", "club": "Pakhtakor Tashkent", "caps": 35},
+            {"name": "Khojiakbar Alijonov", "position": "Midfielder", "club": "Pakhtakor Tashkent", "caps": 30},
+            {"name": "Otabek Shukurov", "position": "Forward", "club": "Pakhtakor Tashkent", "caps": 25},
+        ],
+    },
 }
 
 
