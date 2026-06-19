@@ -21,6 +21,8 @@ from data_processor import (
     get_top_scorers,
     save_model_cache,
     load_model_cache,
+    resolve_team_name,
+    display_team_name,
     STARTING_ELO,
     CONTINENTAL_CHAMPIONSHIPS,
 )
@@ -491,17 +493,26 @@ class WorldCupPredictor:
         return factors
 
     def predict(self, team_a, team_b):
-        """Predict the outcome of a match between team_a and team_b."""
-        try:
-            elo_a = self.elo_ratings.get(team_a, STARTING_ELO)
-            elo_b = self.elo_ratings.get(team_b, STARTING_ELO)
+        """Predict the outcome of a match between team_a and team_b.
 
-            form_a = recent_form(team_a, self.results_df)
-            form_b = recent_form(team_b, self.results_df)
-            h2h = head_to_head(team_a, team_b, self.results_df)
+        team_a/team_b are display names (e.g. "USA"); internally they're
+        resolved to whatever name the historical dataset uses (e.g.
+        "United States") so ELO/form/head-to-head lookups hit real data
+        instead of silently falling back to defaults.
+        """
+        try:
+            internal_a = resolve_team_name(team_a)
+            internal_b = resolve_team_name(team_b)
+
+            elo_a = self.elo_ratings.get(internal_a, STARTING_ELO)
+            elo_b = self.elo_ratings.get(internal_b, STARTING_ELO)
+
+            form_a = recent_form(internal_a, self.results_df)
+            form_b = recent_form(internal_b, self.results_df)
+            h2h = head_to_head(internal_a, internal_b, self.results_df)
 
             if self.model is not None:
-                features = build_feature_vector(team_a, team_b, self.results_df, self.elo_ratings)
+                features = build_feature_vector(internal_a, internal_b, self.results_df, self.elo_ratings)
                 probs = self._predict_proba(features)
                 team_a_prob, draw_prob, team_b_prob = probs[0], probs[1], probs[2]
             else:
@@ -530,8 +541,8 @@ class WorldCupPredictor:
                 "team_a_form": form_a,
                 "team_b_form": form_b,
                 "head_to_head": h2h,
-                "team_a_top_scorers": get_top_scorers(team_a, self.goalscorers_df),
-                "team_b_top_scorers": get_top_scorers(team_b, self.goalscorers_df),
+                "team_a_top_scorers": get_top_scorers(internal_a, self.goalscorers_df),
+                "team_b_top_scorers": get_top_scorers(internal_b, self.goalscorers_df),
                 "key_factors": key_factors,
             }
 
@@ -545,8 +556,8 @@ class WorldCupPredictor:
                 "team_b_win_prob": 33.4,
                 "predicted_winner": "draw",
                 "confidence": "Low",
-                "team_a_elo": int(self.elo_ratings.get(team_a, STARTING_ELO)),
-                "team_b_elo": int(self.elo_ratings.get(team_b, STARTING_ELO)),
+                "team_a_elo": int(self.elo_ratings.get(resolve_team_name(team_a), STARTING_ELO)),
+                "team_b_elo": int(self.elo_ratings.get(resolve_team_name(team_b), STARTING_ELO)),
                 "team_a_form": {},
                 "team_b_form": {},
                 "head_to_head": {},
@@ -566,6 +577,7 @@ class WorldCupPredictor:
             ).value_counts()
 
             eligible = appearances[appearances >= min_matches].index.tolist()
+            eligible = {display_team_name(team) for team in eligible}
             return sorted(eligible)
 
         except Exception as exc:

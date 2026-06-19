@@ -47,6 +47,29 @@ CONTINENTAL_CHAMPIONSHIPS = [
     "uefa nations league",
 ]
 
+# Maps a team's display name (as used in players.py / shown to the user) to
+# the name actually used in the historical results dataset, where they
+# differ. Verified against the live dataset's 336 unique team names -- "USA"
+# is currently the only mismatch among the WC2026 roster. Extend this if
+# more nations are added to players.py and turn out to be aliased.
+TEAM_NAME_ALIASES = {
+    "USA": "United States",
+}
+
+REVERSE_TEAM_NAME_ALIASES = {
+    dataset_name: display_name for display_name, dataset_name in TEAM_NAME_ALIASES.items()
+}
+
+
+def resolve_team_name(name):
+    """Translate a display name (e.g. from players.py) to the dataset's internal name."""
+    return TEAM_NAME_ALIASES.get(name, name)
+
+
+def display_team_name(name):
+    """Translate a dataset-internal team name back to its preferred display name."""
+    return REVERSE_TEAM_NAME_ALIASES.get(name, name)
+
 
 # ---------------------------------------------------------------------------
 # Data loading / caching
